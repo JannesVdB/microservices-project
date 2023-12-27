@@ -27,7 +27,7 @@ public class PlayerController {
         playerService.updatePlayer(playerRequest, id);
     }
 
-    @GetMapping
+    @GetMapping("/bySkuCode")
     @ResponseStatus(HttpStatus.OK)
     public PlayerResponse getPlayerBySkyCode(@RequestParam String skuCode) {
         return playerService.getPlayerBySkuCode(skuCode);

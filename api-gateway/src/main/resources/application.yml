@@ -1,0 +1,107 @@
+server:
+  port: 8083
+
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator: INFO
+    reactor.netty: TRACE
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: create-player
+          uri: http://localhost:8080
+          predicates:
+            - Path=/players
+            - Method=POST
+          filters:
+            - SetPath=/api/player
+        - id: update-player
+          uri: http://localhost:8080
+          predicates:
+            - Path=/players/{id}
+            - Method=PUT
+          filters:
+            - SetPath=/api/player/{id}
+        - id: get-player-skuCode
+          uri: http://localhost:8080
+          predicates:
+            - Path=/players
+          filters:
+            - SetPath=/api/player/bySkuCode
+        - id: get-player-all
+          uri: http://localhost:8080
+          predicates:
+            - Path=/players/all
+          filters:
+            - SetPath=/api/player/all
+        - id: create-club
+          uri: http://localhost:8081
+          predicates:
+            - Path=/clubs
+            - Method=POST
+          filters:
+            - SetPath=/api/club/club
+        - id: get-club-skuCode
+          uri: http://localhost:8081
+          predicates:
+            - Path=/clubs
+          filters:
+            - SetPath=/api/club
+        - id: create-squad
+          uri: http://localhost:8081
+          predicates:
+            - Path=/clubs/squad
+            - Method=POST
+          filters:
+            - SetPath=/api/club/squad
+        - id: update-squad-info
+          uri: http://localhost:8081
+          predicates:
+            - Path=/clubs/squad/{id}
+            - Method=PUT
+          filters:
+            - SetPath=/api/club/squad/{id}
+        - id: add-player-to-squad
+          uri: http://localhost:8081
+          predicates:
+            - Path=/clubs/player/{id}
+            - Method=POST
+          filters:
+            - SetPath=/api/club/player/{id}
+        - id: remove-player-from-squad
+          uri: http://localhost:8081
+          predicates:
+            - Path=/clubs/player/{id}
+            - Method=DELETE
+          filters:
+            - SetPath=/api/club/player/{id}
+        - id: create-match
+          uri: http://localhost:8082
+          predicates:
+            - Path=/matches
+            - Method=POST
+          filters:
+            - SetPath=/api/match
+        - id: update-match
+          uri: http://localhost:8082
+          predicates:
+            - Path=/matches/{id}
+            - Method=PUT
+          filters:
+            - SetPath=/api/match/{id}
+        - id: get-match-skuCode
+          uri: http://localhost:8082
+          predicates:
+            - Path=/matches
+          filters:
+            - SetPath=/api/match
+        - id: get-match-club-skuCode
+          uri: http://localhost:8082
+          predicates:
+            - Path=/matches/club
+          filters:
+            - SetPath=/api/match/club
