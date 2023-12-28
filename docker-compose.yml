@@ -1,0 +1,87 @@
+services:
+ mongo-players:
+  image: mongo:latest
+  ports:
+    - 27017:27017
+  volumes:
+    - mongodb_player_data:/data/db
+    
+ mysql-club:
+  image: mysql:latest
+  ports:
+    - 3307:3306
+  volumes:
+    - mysql_club_data:/var/lib/mysql
+  environment:
+   MYSQL_ROOT_PASSWORD: abc123
+    
+ mysql-match:
+  image: mysql:latest
+  ports:
+    - 3308:3306
+  volumes:
+    - mysql_match_data:/var/lib/mysql
+  environment:
+   MYSQL_ROOT_PASSWORD: abc123
+    
+ player-service:
+  depends_on:
+    - mongo-players
+  image: player-service
+  ports:
+    - 8080:8080
+  links:
+    - mongo-players
+  environment:
+   MONGODB_PORT: 27017
+   MONGODB_HOST: mongo-players
+   
+ club-service:
+  depends_on:
+    - mysql-club
+  image: club-service
+  ports:
+    - 8081:8081
+  links:
+    - mysql-club
+  environment:
+   MYSQL_DB_USERNAME: root
+   MYSQL_DB_PASSWORD: abc123
+   MYSQL_DB_HOST: mysql-club
+   MYSQL_DB_PORT: 3306
+
+ match-service:
+  depends_on:
+    - mysql-match
+  image: match-service
+  ports:
+    - 8082:8082
+  links:
+    - mysql-match
+  environment:
+   MYSQL_DB_USERNAME: root
+   MYSQL_DB_PASSWORD: abc123
+   MYSQL_DB_HOST: mysql-match
+   MYSQL_DB_PORT: 3306
+   
+ api-gateway:
+   depends_on:
+     - player-service
+     - club-service
+     - match-service
+   image: soccer-api-gateway
+   ports:
+     - 8083:8083
+   links:
+     - player-service
+     - club-service
+     - match-service
+   environment:
+     PLAYER_SERVICE_BASEURL: player-service:8080
+     CLUB_SERVICE_BASEURL: club-service:8081
+     MATCH_SERVICE_BASEURL: match-service:8082
+
+volumes:
+ mongodb_player_data:
+ mysql_club_data:
+ mysql_match_data:
