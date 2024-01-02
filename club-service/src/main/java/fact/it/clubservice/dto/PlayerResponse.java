@@ -9,9 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlayerDto {
-    private Long id;
-    private String skuCodePlayer;
+public class PlayerResponse {
+    private String id;
+    private String skuCode;
     private String name;
+    private String dateOfBirth;
+    private String nationality;
     private String position;
 }

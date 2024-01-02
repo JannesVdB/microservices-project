@@ -7,7 +7,9 @@ import fact.it.matchservice.repository.MatchRepository;
 import fact.it.matchservice.repository.TeamPerformanceRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +20,10 @@ import java.util.Optional;
 public class MatchService {
     private final MatchRepository matchRepository;
     private final TeamPerformanceRepository teamPerformanceRepository;
+    private final WebClient webClient;
+
+    @Value("${clubservice.baseurl}")
+    private String clubServiceBaseUrl;
 
     public void createMatch(MatchRequest matchRequest) {
         Match match = new Match();
@@ -41,6 +47,7 @@ public class MatchService {
             TeamPerformance teamPerformance = optionalTeamPerformance.get();
 
             teamPerformance.setSkuCode(teamPerformanceDto.getSkuCode());
+            teamPerformance.setClubName(teamPerformanceDto.getClubName());
             teamPerformance.setSkuCodeClub(teamPerformanceDto.getSkuCodeClub());
             teamPerformance.setGoalsScored(teamPerformanceDto.getGoalsScored());
 
@@ -75,17 +82,29 @@ public class MatchService {
                 teamPerformance.getId(),
                 teamPerformance.getSkuCode(),
                 teamPerformance.getSkuCodeClub(),
+                teamPerformance.getClubName(),
                 teamPerformance.getGoalsScored()
         );
     }
 
     private TeamPerformance mapToTeamPerformance(TeamPerformanceDto teamPerformanceDto) {
-        TeamPerformance teamPerformance = new TeamPerformance();
+        ClubResponse clubResponse = webClient.get().uri("http://" + clubServiceBaseUrl + "/api/club",
+                        uriBuilder -> uriBuilder.queryParam("skuCode", teamPerformanceDto.getSkuCodeClub()).build())
+                .retrieve()
+                .bodyToMono(ClubResponse.class)
+                .block();
 
-        teamPerformance.setSkuCode( teamPerformanceDto.getSkuCode());
-        teamPerformance.setSkuCodeClub(teamPerformanceDto.getSkuCodeClub());
-        teamPerformance.setGoalsScored(teamPerformanceDto.getGoalsScored());
+        if (clubResponse != null) {
+            TeamPerformance teamPerformance = new TeamPerformance();
 
-        return teamPerformance;
+            teamPerformance.setSkuCode(teamPerformanceDto.getSkuCode());
+            teamPerformance.setSkuCodeClub(teamPerformanceDto.getSkuCodeClub());
+            teamPerformance.setClubName(clubResponse.getName());
+            teamPerformance.setGoalsScored(teamPerformanceDto.getGoalsScored());
+
+            return teamPerformance;
+        } else {
+            return null;
+        }
     }
 }

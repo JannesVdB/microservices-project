@@ -1,4 +1,4 @@
-package fact.it.clubservice.dto;
+package fact.it.matchservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlayerDto {
+public class ClubResponse {
     private Long id;
-    private String skuCodePlayer;
+    private String skuCode;
     private String name;
-    private String position;
+    private String foundingDate;
+    private String location;
 }

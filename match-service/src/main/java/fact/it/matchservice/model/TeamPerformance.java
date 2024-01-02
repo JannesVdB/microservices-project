@@ -15,5 +15,6 @@ public class TeamPerformance {
     private Long id;
     private String skuCode;
     private String skuCodeClub;
+    private String clubName;
     private int goalsScored;
 }

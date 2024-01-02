@@ -9,7 +9,9 @@ import fact.it.clubservice.repository.PlayerRepository;
 import fact.it.clubservice.repository.SquadRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Optional;
 
@@ -20,6 +22,10 @@ public class ClubService {
     private final ClubRepository clubRepository;
     private final SquadRepository squadRepository;
     private final PlayerRepository playerRepository;
+    private final WebClient webClient;
+
+    @Value("${playerservice.baseurl}")
+    private String playerServiceBaseUrl;
 
     public void createClub(ClubRequest clubRequest) {
         Club club = Club.builder()
@@ -69,16 +75,26 @@ public class ClubService {
             Squad squad = optionalSquad.get();
 
             Player player = playerRepository.findBySkuCodePlayer(skuCode).orElseGet(() -> {
-                Player newPlayer = new Player();
-                newPlayer.setSkuCodePlayer(skuCode);
+                PlayerResponse newPlayerResponse = webClient.get().uri("http://" + playerServiceBaseUrl +"/api/player",
+                                uriBuilder -> uriBuilder.queryParam("skuCode", skuCode).build())
+                        .retrieve()
+                        .bodyToMono(PlayerResponse.class)
+                        .block();
 
-                return playerRepository.save(newPlayer);
+                if (newPlayerResponse != null) {
+                    Player newPlayer = mapToNewPlayer(newPlayerResponse);
+                    return playerRepository.save(newPlayer);
+                } else {
+                    return null;
+                }
             });
 
-            player.setSquad(squad);
-            squad.getPlayers().add(player);
+            if (player != null) {
+                player.setSquad(squad);
+                squad.getPlayers().add(player);
 
-            squadRepository.save(squad);
+                squadRepository.save(squad);
+            }
         }
     }
 
@@ -116,6 +132,16 @@ public class ClubService {
         return PlayerDto.builder()
                 .id(player.getId())
                 .skuCodePlayer(player.getSkuCodePlayer())
+                .name(player.getName())
+                .position(player.getPosition())
+                .build();
+    }
+
+    private Player mapToNewPlayer(PlayerResponse playerResponse) {
+        return Player.builder()
+                .skuCodePlayer(playerResponse.getSkuCode())
+                .name(playerResponse.getName())
+                .position(playerResponse.getPosition())
                 .build();
     }
 }

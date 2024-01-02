@@ -39,12 +39,15 @@ services:
  club-service:
   depends_on:
     - mysql-club
+    - player-service
   image: club-service
   ports:
     - 8081:8081
   links:
     - mysql-club
+    - player-service
   environment:
+   PLAYER_SERVICE_BASEURL: player-service:8080
    MYSQL_DB_USERNAME: root
    MYSQL_DB_PASSWORD: abc123
    MYSQL_DB_HOST: mysql-club
@@ -53,12 +56,15 @@ services:
  match-service:
   depends_on:
     - mysql-match
+    - club-service
   image: match-service
   ports:
     - 8082:8082
   links:
     - mysql-match
+    - club-service
   environment:
+   CLUB_SERVICE_BASEURL: club-service:8081
    MYSQL_DB_USERNAME: root
    MYSQL_DB_PASSWORD: abc123
    MYSQL_DB_HOST: mysql-match

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class ClubController {
     private final ClubService clubService;
 
-    @PostMapping("/club")
+    @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public void createClub(@RequestBody ClubRequest clubRequest) {
         clubService.createClub(clubRequest);

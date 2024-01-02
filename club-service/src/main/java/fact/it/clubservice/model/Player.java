@@ -15,6 +15,8 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String skuCodePlayer;
+    private String name;
+    private String position;
 
     @ManyToOne
     private Squad squad;
