@@ -7,8 +7,19 @@ logging:
     org.springframework.cloud.gateway: TRACE
     org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator: INFO
     reactor.netty: TRACE
-
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 812443504824-06ie0gm9umskq1ode5c1mvbkl0qgaq2q.apps.googleusercontent.com
+            client-secret: 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
+            scope: openid,profile,email
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.google.com
+          jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
   cloud:
     gateway:
       routes:
