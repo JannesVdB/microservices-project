@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,6 +43,12 @@ public class ClubService {
         return mapToClubResponse(clubRepository.findBySkuCode(skuCode));
     }
 
+    public List<ClubResponse> getAllClubsBySkuCode(List<String> skuCodes) {
+        List<Club> clubList = clubRepository.findBySkuCodeIn(skuCodes);
+
+        return clubList.stream().map(this::mapToClubResponse).toList();
+    }
+
     public void createSquad(String skuCodeClub, SquadRequest squadRequest) {
         Club club = clubRepository.findBySkuCode(skuCodeClub);
 
@@ -62,9 +69,11 @@ public class ClubService {
         Optional<Squad> optionalSquad = squadRepository.findById(squadId);
 
         if (optionalSquad.isPresent()) {
-            Squad squad = optionalSquad.get();
-            squad.setSkuCode(squadRequest.getSkuCode());
-            squad.setFormation(squadRequest.getFormation());
+            Squad updatedSquad = optionalSquad.get();
+            updatedSquad.setSkuCode(squadRequest.getSkuCode());
+            updatedSquad.setFormation(squadRequest.getFormation());
+
+            squadRepository.save(updatedSquad);
         }
     }
 

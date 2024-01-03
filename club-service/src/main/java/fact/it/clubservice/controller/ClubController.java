@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/club")
 @RequiredArgsConstructor
@@ -26,7 +28,14 @@ public class ClubController {
         return clubService.getClubBySkuCode(skuCode);
     }
 
+    @GetMapping("/allBySkuCode")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ClubResponse> getAllClubsBySkuCode(@RequestParam List<String> skuCode) {
+        return  clubService.getAllClubsBySkuCode(skuCode);
+    }
+
     @PostMapping("/squad")
+    @ResponseStatus(HttpStatus.OK)
     public void createSquad(@RequestParam String skuCodeClub, @RequestBody SquadRequest squadRequest) {
         clubService.createSquad(skuCodeClub, squadRequest);
     }

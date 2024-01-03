@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,12 +28,24 @@ public class MatchService {
     public void createMatch(MatchRequest matchRequest) {
         Match match = new Match();
 
-        match.setSkuCode(matchRequest.getSkuCode());
-        match.setDate(matchRequest.getDate());
-
         TeamPerformance homeTeamPerformance = mapToTeamPerformance(matchRequest.getHomeTeamPerformance());
         TeamPerformance awayTeamPerformance = mapToTeamPerformance(matchRequest.getAwayTeamPerformance());
 
+        ClubResponse[] clubResponseList = webClient.get().uri("http://" + clubServiceBaseUrl + "/api/club/allBySkuCode",
+                        uriBuilder -> uriBuilder.queryParam("skuCode", homeTeamPerformance.getSkuCodeClub())
+                                .queryParam("skuCode", awayTeamPerformance.getSkuCodeClub()).build())
+                .retrieve()
+                .bodyToMono(ClubResponse[].class)
+                .block();
+
+        Map<String, String> skuCodeToClubNameMap = Arrays.stream(clubResponseList)
+                .collect(Collectors.toMap(ClubResponse::getSkuCode, ClubResponse::getName));
+
+        homeTeamPerformance.setClubName(skuCodeToClubNameMap.get(homeTeamPerformance.getSkuCodeClub()));
+        awayTeamPerformance.setClubName(skuCodeToClubNameMap.get(awayTeamPerformance.getSkuCodeClub()));
+
+        match.setSkuCode(matchRequest.getSkuCode());
+        match.setDate(matchRequest.getDate());
         match.setHomeTeamPerformance(homeTeamPerformance);
         match.setAwayTeamPerformance(awayTeamPerformance);
 
@@ -88,23 +100,12 @@ public class MatchService {
     }
 
     private TeamPerformance mapToTeamPerformance(TeamPerformanceDto teamPerformanceDto) {
-        ClubResponse clubResponse = webClient.get().uri("http://" + clubServiceBaseUrl + "/api/club",
-                        uriBuilder -> uriBuilder.queryParam("skuCode", teamPerformanceDto.getSkuCodeClub()).build())
-                .retrieve()
-                .bodyToMono(ClubResponse.class)
-                .block();
+        TeamPerformance teamPerformance = new TeamPerformance();
 
-        if (clubResponse != null) {
-            TeamPerformance teamPerformance = new TeamPerformance();
+        teamPerformance.setSkuCode(teamPerformanceDto.getSkuCode());
+        teamPerformance.setSkuCodeClub(teamPerformanceDto.getSkuCodeClub());
+        teamPerformance.setGoalsScored(teamPerformanceDto.getGoalsScored());
 
-            teamPerformance.setSkuCode(teamPerformanceDto.getSkuCode());
-            teamPerformance.setSkuCodeClub(teamPerformanceDto.getSkuCodeClub());
-            teamPerformance.setClubName(clubResponse.getName());
-            teamPerformance.setGoalsScored(teamPerformanceDto.getGoalsScored());
-
-            return teamPerformance;
-        } else {
-            return null;
-        }
+        return teamPerformance;
     }
 }
