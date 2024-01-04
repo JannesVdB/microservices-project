@@ -70,11 +70,17 @@ services:
    MYSQL_DB_HOST: mysql-match
    MYSQL_DB_PORT: 3306
    
+ redis:
+   image: redis:latest
+   ports:
+    - 6379:6379    
+   
  api-gateway:
    depends_on:
      - player-service
      - club-service
      - match-service
+     - redis
    image: soccer-api-gateway
    ports:
      - 8083:8083
@@ -82,10 +88,13 @@ services:
      - player-service
      - club-service
      - match-service
+     - redis
    environment:
      PLAYER_SERVICE_BASEURL: player-service:8080
      CLUB_SERVICE_BASEURL: club-service:8081
      MATCH_SERVICE_BASEURL: match-service:8082
+     SPRING_REDIS_HOST: redis
+     SPRING_REDIS_PORT: 6379
 
 volumes:
  mongodb_player_data:
