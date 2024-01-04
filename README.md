@@ -11,6 +11,8 @@ Voor mijn microservices heb ik spelers, clubs en matchen gekozen. Dit zijn zowat
 
 ## Plaatje
 
+![SoccerMicroservices](https://github.com/JannesVdB/microservices-project/assets/91123262/66e1a8ac-2199-47a5-97f7-76021b4a25bb)
+
 # Uitbreidingen
 
 1. Implementeer rate-limiting op je Spring Cloud Gateway
