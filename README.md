@@ -3,11 +3,13 @@
 ## Thema
 Voetbal, mijn hobby is voetballen dus ik dacht meteen hieraan om mijn project rond te maken.
 
-## Microservices
-Voor mijn microservices heb ik spelers, clubs en matchen gekozen. Dit zijn zowat de 3 belangrijkste dingen die beheerd moeten kunnen worden om matchen tegen andere clubs te spelen.
-
 ## Componenten
-1. Gateway met authenticatie en rate limiting.
+1. Speler microservice
+2. Club microservice
+3. Match microservice
+4. Spring Cloud Gateway
+5. GCP OAuth2
+6. Redis
 
 ## Plaatje
 
