@@ -11,7 +11,7 @@ Voor mijn microservices heb ik spelers, clubs en matchen gekozen. Dit zijn zowat
 
 ## Plaatje
 
-![SoccerMicroservices](https://github.com/JannesVdB/microservices-project/assets/91123262/66e1a8ac-2199-47a5-97f7-76021b4a25bb)
+![SoccerMicroservices](https://github.com/JannesVdB/microservices-project/assets/91123262/0e382758-1585-4389-8e9c-db2bd318ce2f)
 
 # Uitbreidingen
 
