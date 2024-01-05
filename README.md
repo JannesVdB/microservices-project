@@ -17,7 +17,11 @@ Voetbal, mijn hobby is voetballen dus ik dacht meteen hieraan om mijn project ro
 
 # Uitbreidingen
 
-1. Implementeer rate-limiting op je Spring Cloud Gateway
+1. Implementeer rate-limiting op de Spring Cloud Gateway.
+
+# Link naar hosted services
+
+Ik kon geen account meer aanmaken op Okteto, ik heb dus alles lokaal gerund.
 
 # Endpoints
 
@@ -83,6 +87,10 @@ Voetbal, mijn hobby is voetballen dus ik dacht meteen hieraan om mijn project ro
 #### Bewijs
 
 ![club_delete_player_get](https://github.com/JannesVdB/microservices-project/assets/91123262/4c24deb9-a9f4-4a8a-86f3-3c7bf380556e)
+
+### Alle clubs opvragen met skuCodes
+
+![club_get_all_skuCode](https://github.com/JannesVdB/microservices-project/assets/91123262/bdb3a24f-e86a-4b90-9ef6-ad02be82f8a5)
 
 ## Match
 
